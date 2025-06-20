@@ -1,0 +1,12 @@
+syntax = "proto3";
+package healthchain.healthchain;
+
+import "gogoproto/gogo.proto";
+import "healthchain/healthchain/params.proto";
+
+option go_package = "healthchain/x/healthchain/types";
+
+// GenesisState defines the healthchain module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
