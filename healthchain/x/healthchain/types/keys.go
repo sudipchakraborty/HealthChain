@@ -17,3 +17,8 @@ const (
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
+
+const (
+	RecordKey      = "Record/value/"
+	RecordCountKey = "Record/count/"
+)

@@ -1,26 +1,58 @@
 syntax = "proto3";
+
 package healthchain.healthchain;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "healthchain/healthchain/params.proto";
+import "healthchain/healthchain/record.proto";
 
 option go_package = "healthchain/x/healthchain/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  
   // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/healthchain/healthchain/params";
+  
+  }
+  
+  // Queries a list of Record items.
+  rpc Record    (QueryGetRecordRequest) returns (QueryGetRecordResponse) {
+    option (google.api.http).get = "/healthchain/healthchain/record/{id}";
+  
+  }
+  rpc RecordAll (QueryAllRecordRequest) returns (QueryAllRecordResponse) {
+    option (google.api.http).get = "/healthchain/healthchain/record";
+  
   }
 }
-
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
+  
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
 }
+
+message QueryGetRecordRequest {
+  uint64 id = 1;
+}
+
+message QueryGetRecordResponse {
+  Record Record = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRecordRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRecordResponse {
+  repeated Record                                 Record     = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+

@@ -1,7 +1,42 @@
 syntax = "proto3";
+
 package healthchain.healthchain;
+
+import "healthchain/healthchain/record.proto";
 
 option go_package = "healthchain/x/healthchain/types";
 
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  rpc CreateRecord (MsgCreateRecord) returns (MsgCreateRecordResponse);
+  rpc UpdateRecord (MsgUpdateRecord) returns (MsgUpdateRecordResponse);
+  rpc DeleteRecord (MsgDeleteRecord) returns (MsgDeleteRecordResponse);
+}
+message MsgCreateRecord {
+  string creator   = 1;
+  uint64 patientId = 2;
+  uint64 sys       = 3;
+  uint64 dia       = 4;
+}
+
+message MsgCreateRecordResponse {
+  uint64 id = 1;
+}
+
+message MsgUpdateRecord {
+  string creator   = 1;
+  uint64 id        = 2;
+  uint64 patientId = 3;
+  uint64 sys       = 4;
+  uint64 dia       = 5;
+}
+
+message MsgUpdateRecordResponse {}
+
+message MsgDeleteRecord {
+  string creator = 1;
+  uint64 id      = 2;
+}
+
+message MsgDeleteRecordResponse {}
+
