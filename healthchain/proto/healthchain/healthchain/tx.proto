@@ -1,0 +1,7 @@
+syntax = "proto3";
+package healthchain.healthchain;
+
+option go_package = "healthchain/x/healthchain/types";
+
+// Msg defines the Msg service.
+service Msg {}
