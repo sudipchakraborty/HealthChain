@@ -23,7 +23,19 @@ var (
 )
 
 const (
-// this line is used by starport scaffolding # simapp/module/const
+	opWeightMsgCreateRecord = "op_weight_msg_record"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgCreateRecord int = 100
+
+	opWeightMsgUpdateRecord = "op_weight_msg_record"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgUpdateRecord int = 100
+
+	opWeightMsgDeleteRecord = "op_weight_msg_record"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgDeleteRecord int = 100
+
+	// this line is used by starport scaffolding # simapp/module/const
 )
 
 // GenerateGenesisState creates a randomized GenState of the module.
@@ -34,6 +46,17 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	healthchainGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
+		RecordList: []types.Record{
+			{
+				Id:      0,
+				Creator: sample.AccAddress(),
+			},
+			{
+				Id:      1,
+				Creator: sample.AccAddress(),
+			},
+		},
+		RecordCount: 2,
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&healthchainGenesis)
@@ -51,6 +74,39 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 
+	var weightMsgCreateRecord int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgCreateRecord, &weightMsgCreateRecord, nil,
+		func(_ *rand.Rand) {
+			weightMsgCreateRecord = defaultWeightMsgCreateRecord
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgCreateRecord,
+		healthchainsimulation.SimulateMsgCreateRecord(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgUpdateRecord int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgUpdateRecord, &weightMsgUpdateRecord, nil,
+		func(_ *rand.Rand) {
+			weightMsgUpdateRecord = defaultWeightMsgUpdateRecord
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgUpdateRecord,
+		healthchainsimulation.SimulateMsgUpdateRecord(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
+	var weightMsgDeleteRecord int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteRecord, &weightMsgDeleteRecord, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteRecord = defaultWeightMsgDeleteRecord
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgDeleteRecord,
+		healthchainsimulation.SimulateMsgDeleteRecord(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -59,6 +115,30 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 // ProposalMsgs returns msgs used for governance proposals for simulations.
 func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgCreateRecord,
+			defaultWeightMsgCreateRecord,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				healthchainsimulation.SimulateMsgCreateRecord(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgUpdateRecord,
+			defaultWeightMsgUpdateRecord,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				healthchainsimulation.SimulateMsgUpdateRecord(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgDeleteRecord,
+			defaultWeightMsgDeleteRecord,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				healthchainsimulation.SimulateMsgDeleteRecord(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
 		// this line is used by starport scaffolding # simapp/module/OpMsg
 	}
 }

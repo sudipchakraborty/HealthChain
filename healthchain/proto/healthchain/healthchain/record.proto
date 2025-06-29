@@ -1,0 +1,12 @@
+syntax = "proto3";
+package healthchain.healthchain;
+
+option go_package = "healthchain/x/healthchain/types";
+
+message Record {
+  uint64 id = 1;
+  uint64 patientId = 2; 
+  uint64 sys = 3; 
+  uint64 dia = 4; 
+  string creator = 5;
+}
